@@ -1,0 +1,138 @@
+<html>
+<head/>
+<body>
+<canvas id='lab09' width='500' height='500' style="border:1px solid"> </canvas>
+<script>
+    var canvas=document.getElementById('lab09');
+    var red = canvas.getContext('2d');
+    var crds = [[220,60],[440,330],[300,400]];
+    var n1 = [0, -1, -2];
+    var n2 = [2, 0, 4];
+    window.onload = function() {
+        figure = [{'x': 220, 'y': 60 ,'z': 50 }, 	//top point
+            {'x': 440, 'y': 330,'z': 0  },	//right
+            {'x': 300, 'y': 400,'z': 0  }, 	//middle
+            {'x': 50 , 'y': 400,'z': 0  },    //left
+        ];
+        svet = [400, 500, 100];
+        var tmp = [600-200, 500-300, 100 - 0];
+        var cosin_1 = cosin(n1,tmp);
+        var color = [cosin_1*021, cosin_1*168, cosin_1*124];
+        red.strokeStyle = 'rgb('+color[0]+','+color[1]+','+color[2]+')';
+        drawFigure();
+        drawFig();
+        var tmp2 = [400-400, 500-100, 100 - 0];
+        var cosin_2 = cosin(n2,tmp2);
+        var color2 = [cosin_2*021, cosin_2*168, cosin_2*124];
+        red.strokeStyle = 'rgb('+color2[0]+','+color2[1]+','+color2[2]+')';
+        crds = [[220,60],[50,400],[300,400]];
+        drawFig();
+    }
+    function cosin(vec1, vec2) {
+        var tochka1 = Math.sqrt(vec1[0]*vec1[0] + vec1[1]*vec1[1] + vec1[2]*vec1[2]);
+        var tochka2 = Math.sqrt(vec2[0]*vec2[0] + vec2[1]*vec2[1] + vec2[2]*vec2[2]);
+        var tchk = tochka1 *tochka2;
+        var ccos = Math.abs((vec1[0]*vec2[0] + vec1[1]*vec2[1] + vec1[2]*vec2[2]) / tchk);
+        console.log(ccos);
+        return ccos;
+    }
+    function drawFigure() {
+        red.fillStyle = '#ffffff';
+        red.beginPath();
+        red.moveTo(figure[0].x,figure[0].y);
+        for(var d in figure){
+            red.lineTo(figure[d].x,figure[d].y);
+        }
+        red.closePath();
+        red.stroke();
+        red.beginPath();
+        red.moveTo(figure[0].x,figure[0].y);
+        red.lineTo(figure[2].x,figure[2].y);
+        red.closePath();
+        red.stroke();
+    }
+    function drawFig(){
+        var tmpBuffer = [];
+        tmpBuffer = crds;
+        for(var j = 0; j < tmpBuffer.length; j++) {
+            if(j == tmpBuffer.length - 1){
+                tmpBuffer = crds;
+                drawLine(tmpBuffer[j], tmpBuffer[0]);
+            }
+            else {tmpBuffer = crds; drawLine(tmpBuffer[j], tmpBuffer[j+1]);}
+        }
+        fill();
+        crds = [];
+    }
+    function drawLine(p1, p2) {
+        red.beginPath()
+        red.lineWidth = 1;
+        red.moveTo(p1[0], p1[1]);
+        red.lineTo(p2[0], p2[1]);
+        red.stroke();
+    }
+
+    function fill() {
+        crds = rst();
+        for(var i = 0; i < crds.length - 2; i++) {
+            if(crds[i][1] == crds[i+2][1] && crds[i][1] != crds[i+3][1]){
+                drawLine(crds[i],crds[i+2]);
+                i+=2;
+            }
+            else if(crds[i][1] == crds[i+1][1]){
+                drawLine(crds[i],crds[i+1]);
+                i++;
+            }
+        }
+    }
+    function oneLine(p1, p2){
+        if(p1[1] == p2[1]){return true;}
+        return false;
+    }
+    function rst()
+    {
+        var emp = [];
+        for(var i = 0; i < crds.length - 1; i++) {
+            if(!oneLine(crds[i],crds[i+1])){
+                emp = emp.concat(othrln(crds[i],crds[i+1]));
+            }
+            else {emp.push(crds[i]);}
+        }
+        if(!oneLine(crds[crds.length - 1], crds[0])) {
+            emp = emp.concat(othrln(crds[crds.length - 1], crds[0]));
+        }
+        return emp.sort(srt);
+    }
+    function othrln(p1, p2)  {
+        var y = p1[1],
+            dx = (p2[0] - p1[0])/(p2[1] - p1[1]),
+            x = p1[0],
+            emp = [];
+        if(p1[1] < p2[1]){
+            while(y <= p2[1]){
+                emp.push([x,y]);
+                y++;
+                x += dx;
+            }
+        }
+        else{
+            while(y >= p2[1]){
+                emp.push([x,y]);
+                y--;
+                x -= dx;
+            }
+        }
+        return emp;
+    }
+    function srt(p1,p2)	{
+        if(p1[1] > p2[1]) return 1;
+        if(p1[1] < p2[1]) return -1;
+        if(p1[1] == p2[1]) {
+            if(p1[0] > p2[0]) return 1;
+            if(p1[0] < p2[0]) return -1;
+            if(p1[0] == p2[0]) return 0;
+        }
+    }
+</script>
+</body>
+</html>
